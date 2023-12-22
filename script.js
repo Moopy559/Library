@@ -1,5 +1,5 @@
 const myLibrary = [];
-let delCounter = 0;
+let delCounter = 1;
 
 function Book(title, author, pages, read) {
   this.title = title;
@@ -23,11 +23,20 @@ function displayBook() {
     const td = dataRow.insertCell();
     td.textContent = lastEntry[key];
   }
-  delCounter++;
+  // Handles the logic for the DELETE buttons in the table
   const delCell = dataRow.insertCell();
   const delButton = document.createElement("button");
-  delButton.setAttribute("id", delCounter);
+  delButton.setAttribute("id", "delbut" + delCounter++);
   delButton.textContent = "X";
+  delButton.addEventListener("click", (event) => {
+    console.log(event.target);
+    let row = event.target.parentNode.parentNode;
+    console.log(row);
+    let table = row.parentNode;
+    console.log(table);
+    console.log(row.rowIndex);
+    table.deleteRow(row.rowIndex);
+  });
   delCell.appendChild(delButton);
 }
 
