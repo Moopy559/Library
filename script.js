@@ -1,15 +1,16 @@
 const myLibrary = [];
-let delCounter = 1;
+let delCounter = 0;
 
-function Book(title, author, pages, read) {
+function Book(id, title, author, pages, read) {
+  this.id = id;
   this.title = title;
   this.author = author;
   this.pages = pages;
   this.read = read;
 }
 
-function addBookToLibrary(title, author, pages, read) {
-  myLibrary.push(new Book(title, author, pages, read));
+function addBookToLibrary(id, title, author, pages, read) {
+  myLibrary.push(new Book(id, title, author, pages, read));
 }
 
 // Populates the table and adds 'Delete' Button
@@ -19,23 +20,34 @@ function displayBook() {
   let lastEntry = myLibrary[lastIndex];
 
   const dataRow = libTable.insertRow();
+
+  let firstPropertySkipped = false;
   for (const key in lastEntry) {
+    if (!firstPropertySkipped) {
+      firstPropertySkipped = true;
+      continue;
+    }
     const td = dataRow.insertCell();
     td.textContent = lastEntry[key];
   }
+
   // Handles the logic for the DELETE buttons in the table
   const delCell = dataRow.insertCell();
   const delButton = document.createElement("button");
+  delButton.setAttribute("obj-index", delCounter);
   delButton.setAttribute("id", "delbut" + delCounter++);
   delButton.textContent = "X";
   delButton.addEventListener("click", (event) => {
     console.log(event.target);
+    console.log(event.target.getAttribute("obj-index"));
     let row = event.target.parentNode.parentNode;
     console.log(row);
     let table = row.parentNode;
     console.log(table);
     console.log(row.rowIndex);
     table.deleteRow(row.rowIndex);
+    let objectIndex = event.target.getAttribute("obj-index");
+    myLibrary.splice(objectIndex, 1);
   });
   delCell.appendChild(delButton);
 }
@@ -63,7 +75,7 @@ function submitForm() {
     readValue = "No";
   }
 
-  addBookToLibrary(title, author, pages, readValue);
+  addBookToLibrary(delCounter, title, author, pages, readValue);
   displayBook();
   resetForm();
 }
