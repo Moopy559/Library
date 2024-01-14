@@ -10,13 +10,9 @@ function Book(id, title, author, pages, read) {
   this.read = read;
 }
 
-// Toggles the 'read' status of a book object
-Book.prototype.toggleReadStatus = function () {
-  if (this.read === "No") {
-    this.read = "Yes";
-  } else {
-    this.read = "No";
-  }
+// Prototype function to toggle a book's 'read' property
+Book.prototype.toggleRead = function () {
+  console.log(this.title);
 };
 
 function addBookToLibrary(id, title, author, pages, read) {
@@ -29,7 +25,6 @@ function displayBook() {
   // Only update the table with the most recent entry to myLibrary array
   let lastIndex = myLibrary.length - 1;
   let lastEntry = myLibrary[lastIndex];
-
   const dataRow = libTable.insertRow();
 
   // Toggle to ensure first 'ID' property of objects isn't recorded
@@ -39,6 +34,13 @@ function displayBook() {
       firstPropertySkipped = true;
       continue;
     }
+
+    // Check if the property is a function, and skip it
+    if (typeof lastEntry[key] === "function") {
+      continue;
+    }
+
+    // Adds text content to each cell in the table
     const td = dataRow.insertCell();
     td.textContent = lastEntry[key];
   }
@@ -50,13 +52,8 @@ function displayBook() {
   delButton.setAttribute("id", "delbut" + delCounter++);
   delButton.textContent = "X";
   delButton.addEventListener("click", (event) => {
-    console.log(event.target);
-    console.log(event.target.getAttribute("obj-index"));
     let row = event.target.parentNode.parentNode;
-    console.log(row);
     let table = row.parentNode;
-    console.log(table);
-    console.log(row.rowIndex);
     table.deleteRow(row.rowIndex);
     // Deletes the corresponding book object from myLibrary array
     let objectIndex = event.target.getAttribute("obj-index");
