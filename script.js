@@ -1,5 +1,6 @@
 const myLibrary = [];
 let delCounter = 0;
+let upCounter = 0;
 
 // Object constructor for books
 function Book(id, title, author, pages, read) {
@@ -45,19 +46,42 @@ function displayBook() {
     td.textContent = lastEntry[key];
   }
 
+  // Handles the logic for the UPDATE STATUS button in the table
+  const upCell = dataRow.insertCell();
+  const upButton = document.createElement("button");
+  upButton.setAttribute("obj-id", upCounter++);
+  upButton.textContent = "Change Status";
+  upButton.addEventListener("click", (event) => {
+    let objectID = event.target.getAttribute("obj-id");
+    let foundObject = myLibrary.find((obj) => obj.id == objectID);
+    if (foundObject.read === "Yes") {
+      foundObject.read = "No";
+    } else if (foundObject.read === "No") {
+      foundObject.read = "Yes";
+    }
+
+    let row = event.target.parentNode.parentNode;
+    let completedCell = row.cells[3];
+    completedCell.textContent = foundObject.read;
+  });
+  upCell.appendChild(upButton);
+  // user clicks button
+  // book object 'read' status is updated using an IF statement to yes or no
+  // status cell text content is updated to reflect book object 'read' status
+
   // Handles the logic for the DELETE buttons in the table
   const delCell = dataRow.insertCell();
   const delButton = document.createElement("button");
-  delButton.setAttribute("obj-index", delCounter);
-  delButton.setAttribute("id", "delbut" + delCounter++);
+  delButton.setAttribute("del-id", delCounter++);
   delButton.textContent = "X";
   delButton.addEventListener("click", (event) => {
     let row = event.target.parentNode.parentNode;
     let table = row.parentNode;
     table.deleteRow(row.rowIndex);
-    // Deletes the corresponding book object from myLibrary array
-    let objectIndex = event.target.getAttribute("obj-index");
-    myLibrary.splice(objectIndex, 1);
+    // Deletes the corresponding book object from myLibrary array by searching for its ID in the array, then returning an index position to be spliced out.
+    let delID = event.target.getAttribute("del-id");
+    let foundDelObjectIndex = myLibrary.findIndex((obj) => obj.id == delID);
+    myLibrary.splice(foundDelObjectIndex, 1);
   });
   delCell.appendChild(delButton);
 }
